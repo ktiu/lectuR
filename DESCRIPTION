@@ -1,0 +1,14 @@
+Package: lectuR
+Title: Tools I Need For Teaching
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Till",
+           family = "Straube",
+           role = c("aut", "cre"),
+           email = "straube@geo.uni-frankfurt.de")
+Description: Mostly contains helper functions to calculate grades and generate notification mails.
+License: use_gpl_license()
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
