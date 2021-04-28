@@ -26,7 +26,7 @@ get_z_trans <- function(mean=NULL, sd=NULL, x=NULL, z=NULL, pop=F, symbol="i") {
       sprintf(label_x, label_z, label_sd, label_mean)
     result$einsetzen <- "$%s = %s \\cdot %s + %s$" %>%
       sprintf(label_x, z, sd, mean) %>%
-      fix_formulj
+      fix_formula
     result$raw <- round(z * sd + mean, 2)
     result$fmt <- fmt(result$raw)
     result$ergebnis <- sprintf("$%s\\approx%s$", label_x, result$fmt)
