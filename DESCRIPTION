@@ -1,14 +1,20 @@
 Package: lectuR
-Title: Tools I Need For Teaching
+Title: My Teaching Workbench, Neatly Packaged
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Till",
            family = "Straube",
            role = c("aut", "cre"),
            email = "straube@geo.uni-frankfurt.de")
-Description: Mostly contains helper functions to calculate grades and generate notification mails.
+Description: Contains highly specific helper functions for my personal everyday tasks related to teaching, e.g. to publish course materials and slides, to calculate grades, or generate mails to students.
 License: use_gpl_license()
 Encoding: UTF-8
+Imports:
+    dplyr,
+    purrr,
+    magrittr,
+    knitr,
+    kableExtra
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1

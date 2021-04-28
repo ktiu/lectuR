@@ -97,7 +97,9 @@ kriterien_mean <- function(noten, kriterien) {
   })
 }
 
-einlesen <- function(noten_file, kriterien_file) {
+#' @export
+einlesen <- function(noten_file="noten.yml",
+                     kriterien_file="kriterien.yml") {
   noten <- yaml::read_yaml(noten_file)
   kriterien <- yaml::read_yaml(kriterien_file)
   check_weighting(kriterien)
@@ -118,7 +120,9 @@ einlesen <- function(noten_file, kriterien_file) {
     # Noten errechnen
     purrr::reduce(projekt$teilnoten, function(acc, tn) {
       acc + tn$gewichtung * tn$note
-    }, .init = 0) -> projekt$note
+    }, .init = 0) -> pre
+    projekt$note <- runden(pre)
+    projekt$notenpunkte <- punkte(projekt$note)
     return(projekt)
   })
 }
