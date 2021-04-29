@@ -27,9 +27,16 @@ fmt <- function(number, digits=2) {
 }
 
 #' @export
-percent <- function(number, digits=2) {
+percent <- function() {
   if ((!is.null(target)) && target == "latex") {
     return("\\%")
   } else return("%")
+}
+
+#' @export
+abcparen <- function(number, digits=2) {
+  if ((!is.null(target)) && target == "latex") {
+    return(")")
+  } else return("\\)")
 }
 
