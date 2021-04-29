@@ -1,6 +1,6 @@
 #' @export
 solve_mean <- function(xs, fragment=F) {
-  prefix = ifelse(fragment, "> ", "")
+  prefix <- ifelse(fragment, "> ", "")
   n <- length(xs)
   zaehler <- sum(xs) %>% round(2)
   m <- round(zaehler/n, 2)
@@ -196,7 +196,6 @@ get_phi <- function(chisq=NULL, n=NULL) {
   return(result)
 }
 
-#' @export
 fix_formula <- function(string){
   string %>%
     str_replace_all("(\\d),(\\d)", "\\1{,}\\2") %>%

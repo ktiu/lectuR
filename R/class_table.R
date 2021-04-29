@@ -1,8 +1,3 @@
-#' @import magrittr
-#' @import dplyr
-#' @import purrr
-#' @import kableExtra
-
 #' @export
 klassieren <- function(data, unit, breaks = NULL){
 

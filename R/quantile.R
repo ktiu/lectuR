@@ -91,7 +91,9 @@ get_z_under <- function(p, symbol="i") {
     fix_formula
   if (p < 0.5) {
     result$umformen  <- "$P(z \\leq -%s) = 1-%s = %s$" %>%
-      sprintf(label, p, 1-p) %>%
+      sprintf(label,
+              format(p, scientific = F),
+              format(1 - p, scientific = F)) %>%
       fix_formula
     negative <- round(qnorm(round(1-p,4)), 2)
     result$einsetzen <- sprintf("$-%s \\approx %s$", label, negative) %>%
@@ -147,9 +149,9 @@ get_intervall <- function(stderr=NULL, kib2=NULL, alpha=NULL) {
     result$fmt <- (fmt(result$raw))
     result$ergebnis <- "$\\frac{\\mathit{KIB}}{2} \\approx %s$" %>%
       sprintf(result$fmt)
-  } else if(length(c(kib2, stderr))==2) {
+  } else if (length(c(kib2, stderr)) == 2) {
     stop("Getting alpha not implemented yet")
-  } else if(length(c(kib2, alpha))==2) {
+  } else if(length(c(kib2, alpha)) == 2) {
     result$umformen <- "$\\sigma_{\\bar{x}} = \\frac{\\mathit{KIB}}{2} \\cdot \\frac{1}{z_{(1-\\alpha/2)}}$"
     result$einsetzen <- "$\\sigma_{\\bar{x}}=\\frac{\\mathit{KIB}}{2}\\cdot \\frac{1}{z_{%s\\%%}} = %s \\cdot \\frac{1}{%s}$" %>% 
       sprintf(100-alpha/2*100, kib2, round(qnorm(1-alpha/2),2)) %>%

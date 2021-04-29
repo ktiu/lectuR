@@ -1,3 +1,4 @@
+#' @export
 runden <- function(note) {
   if(!(note <= 6 && note >= 0)) stop("note must be between 0 and 6")
   pre <- round(round((note * 3) - 0.1) / 3, 1)
@@ -6,6 +7,7 @@ runden <- function(note) {
   return(pre)
 }
 
+#' @export
 punkte <- function(note) {
   if(!(note <= 6 && note >= 0)) stop("note must be between 0 and 6")
   pre <- round(17 - note * 3)
@@ -16,7 +18,7 @@ punkte <- function(note) {
 
 check_weighting <- function(kriterien) {
   w <- sum(purrr::map_dbl(kriterien, "gewichtung"))
-  if(! w == 1) stop(
+  if (! w == 1) stop(
     sprintf("Gewichtungen müssen 1 ergeben (jetzt: %s)", w)
   )
 }
