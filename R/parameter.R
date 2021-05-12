@@ -1,46 +1,4 @@
 #' @export
-solve_mean <- function(xs, fragment=F) {
-  prefix <- ifelse(fragment, "> ", "")
-  n <- length(xs)
-  zaehler <- sum(xs) %>% round(2)
-  m <- round(zaehler/n, 2)
-  lines = c(
-    sprintf("%s- $\\bar{x}=\\frac{\\sum\\limits_{i=1}^{n}x_{i}}{n}$", prefix),
-    sprintf("%s- $\\bar{x}=\\frac{%s}{%i}$\n", prefix, fmt(zaehler), n),
-    sprintf("%s- $\\bar{x}=%s$", prefix, fmt(m))
-  )
-  cat(lines, sep="\n")
-  return(m)
-}
-
-#' @export
-solve_var <- function(xs, mean=NA, fragment=F) {
-  if(is.na(mean)){mean<- mean(xs)}
-  prefix = ifelse(fragment, "> ", "")
-  n <- length(xs)
-  zaehler <- sum((xs-mean)^2)
-  variance <- round(zaehler/(n-1), 2)
-  c(
-    sprintf("%s- $s^2=\\frac{\\sum\\limits_{i=1}^{n}(x_{i}-\\bar{x})^2}{n-1}$", prefix),
-    sprintf("%s- $s^2=\\frac{%s}{%i-1}$", prefix, fmt(zaehler), n),
-    sprintf("%s- $s^2=%s$", prefix, fmt(variance))
-  ) %>% cat(sep="\n")
-  return(variance)
-}
-
-#' @export
-solve_sd <- function(variance, mean=NA, fragment=F) {
-  prefix <- ifelse(fragment, "> ", "")
-  standard_deviation <- round(sqrt(variance), 2)
-  c(
-    sprintf("%s- $s=\\sqrt{s^2}$", prefix),
-    sprintf("%s- $s=\\sqrt{%s}$", prefix, fmt(variance)),
-    sprintf("%s- $s=%s$", prefix, fmt(standard_deviation))
-  ) %>% cat(sep="\n")
-  return(standard_deviation)
-}
-
-#' @export
 get_mean <- function(data = NULL, symbol = "x") {
   result <- list()
   result$formel <- sprintf("$\\bar{%s}=\\frac{\\sum\\limits_{i=1}^{n}%s_{i}}{n}$",
@@ -148,79 +106,39 @@ get_iqr <- function(data=NULL, alt=F, symbol="x") {
     sorted <- sort(data)
     q1 <- median(sorted[1:ceiling(length(data)/2)])
     q3 <- median(sorted[floor(length(data)/2+1):length(data)])
-    result$q1 <- "$%s=%s$" %>% sprintf("Q_1", q1) %>% fix_formula
-    result$q3 <- "$%s=%s$" %>% sprintf("Q_3", q3) %>% fix_formula
-    result$einsetzen <- sprintf("$%s=%s-%s$", label, q3, q1) %>% fix_formula
-    result$raw <- q3-q1
-    result$fmt <- str_replace(result$raw, ",", "{,}")
+    result$q1 <- "$%s=%s$" %>% sprintf("Q_1", q1) %>% fix_formula()
+    result$q3 <- "$%s=%s$" %>% sprintf("Q_3", q3) %>% fix_formula()
+    result$einsetzen <- sprintf("$%s=%s-%s$", label, q3, q1) %>% fix_formula()
+    result$raw <- q3 - q1
+    result$fmt <- stringr::str_replace(result$raw, ",", "{,}")
     result$ergebnis <- sprintf("$%s=%s$", label, result$fmt)
   }
   return(result)
 }
 
 #' @export
-get_variationskoeffizient <- function(data=NULL, mean=NULL, sd=NULL, alt=F, symbol="x") {
+get_variationskoeffizient <- function(data = NULL,
+                                      mean=NULL,
+                                      sd=NULL,
+                                      alt=F,
+                                      symbol="x") {
    label <- ifelse(alt, sprintf("v_%s", symbol), "v")
    result <- list(
     formel = "$%s=\\frac{s}{|\\bar{x}|}\\cdot100\\%%\\quad$" %>%
       sprintf(label)
    )
-   if(!is.null(data)) {
-     if(is.null(mean)) mean <- get_mean(data)$raw
-     if(is.null(sd))   sd   <- get_sd(data)$raw
+   if (!is.null(data)) {
+     if (is.null(mean)) mean <- get_mean(data)$raw
+     if (is.null(sd))   sd   <- get_sd(data)$raw
    }
-   if(length(c(mean, sd))==2) {
+   if (length(c(mean, sd)) == 2) {
      result$einsetzen <- "$%s=\\frac{%s}{%s}\\cdot100\\%%$" %>%
       sprintf(label, sd, abs(mean)) %>%
       fix_formula
-     result$raw <- round(sd/mean*100, 2)
+     result$raw <- round(sd / mean * 100, 2)
      result$fmt <- fmt(result$raw)
      result$ergebnis <- "$%s=%s\\%%$" %>%
       sprintf(label, result$fmt)
    }
    return(result)
-}
-
-#' @export
-get_phi <- function(chisq=NULL, n=NULL) {
-  result <- list()
-  result$formel <- "$\\phi=\\sqrt{\\frac{\\chi^2}{n}}$"
-  if(length(c(chisq, n)) == 2) {
-    result$einsetzen <- "$\\phi\\approx\\sqrt{\\frac{%s}{%s}}$" %>%
-      sprintf(chisq, n) %>%
-      fix_formula
-    result$raw <- round(sqrt(chisq/n), 2)
-    result$fmt <- fmt(result$raw)
-    result$ergebnis <- sprintf("$\\phi\\approx%s$", result$fmt)
-  }
-  return(result)
-}
-
-fix_formula <- function(string){
-  string %>%
-    str_replace_all("(\\d),(\\d)", "\\1{,}\\2") %>%
-    str_replace_all("- *-", "+") %>%
-    str_replace_all("\\+ *-", "-") %>%
-    str_replace_all("\\cdot *(-[0-9,{}]*)", "\\cdot \\(\\1\\)")
-}
-
-#' @export
-solution_table <- function(solution_data, meta=T) {
-  summe <- sum(solution_data$Punkte)
-  summenzeile <- nrow(solution_data) + 1
-  solution_data %>%
-    mutate(`Erreicht`=sprintf("<input type='checkbox' style='width:30px; height:30px' value='%s' />", str_replace(Punkte, ",", ".")),
-           `Max. Punkte`=format(Punkte, nsmall=1),
-           `&nbsp;` = ifelse(Implizit, "(auch&nbsp;implizit)", "")) %>%
-    (function(x) {
-       if (meta) {
-         x %>%
-           select(Schritt, Musterlösung, `&nbsp;`, `Max. Punkte`, `Erreicht`) %>%
-           bind_rows(x, list(Schritt="", `Musterlösung`="", `&nbsp;`="$\\sum$", `Max. Punkte`=format(summe, nsmall=1), `Erreicht`="<div class='punkte-aufgabe'><input type='hidden' value='1'/><span></span>")) %>%
-           tabelle(escape = F, align = "lccc")
-       } else {
-        select(x, Schritt, Musterlösung) %>%
-          tabelle(escape = F, align = "lc")
-       }
-    })
 }
